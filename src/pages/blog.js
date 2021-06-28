@@ -2,8 +2,19 @@ import { graphql, useStaticQuery, Link } from "gatsby"
 import React from "react"
 import Layout from "../components/layout"
 import Seo from "../components/seo"
-import { InnerWrap, TextWrap } from "../styles/components/columnLayout"
+import { InnerWrap } from "../styles/components/columnLayout"
 import Container from "../styles/global/container"
+import {
+  GridWrapper,
+  LinkToPost,
+  Title,
+  Cards,
+  Excerpt,
+  ReadMore,
+  PageHeader,
+  FlexWrap,
+  Tags,
+} from "../styles/components/blogPageStyling"
 
 const Blog = () => {
   const data = useStaticQuery(graphql`
@@ -11,7 +22,7 @@ const Blog = () => {
       allMdx {
         nodes {
           id
-          timeToRead
+          excerpt(pruneLength: 150)
           frontmatter {
             title
             slug
@@ -25,22 +36,24 @@ const Blog = () => {
     <Layout>
       <Seo title="blog" />
       <Container>
-        <TextWrap>
-          <InnerWrap>
-            {data.allMdx.nodes.map(({ id, frontmatter, timeToRead }) => (
-              <article key={id}>
-                <Link to={frontmatter.slug}>
-                  <h2>{frontmatter.title}</h2>
-                  <p>{timeToRead} min read</p>
-                  <p>{frontmatter.tags}</p>
-                </Link>
-              </article>
-            ))}
-            <InnerWrap>
-              <Link to="/">Go back to the homepage</Link>
-            </InnerWrap>
-          </InnerWrap>
-        </TextWrap>
+        <FlexWrap>
+          <PageHeader>Writing</PageHeader>
+        </FlexWrap>
+        <GridWrapper>
+          {data.allMdx.nodes.map(({ id, frontmatter, excerpt }) => (
+            <Cards key={id}>
+              <LinkToPost to={frontmatter.slug}>
+                <Title>{frontmatter.title}</Title>
+                <Excerpt>{excerpt}</Excerpt>
+                <ReadMore>Read more</ReadMore>
+                <Tags>{frontmatter.tags}</Tags>
+              </LinkToPost>
+            </Cards>
+          ))}
+        </GridWrapper>
+        <InnerWrap>
+          <Link to="/">Go back to the homepage</Link>
+        </InnerWrap>
       </Container>
     </Layout>
   )
